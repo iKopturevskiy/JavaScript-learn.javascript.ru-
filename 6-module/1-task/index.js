@@ -15,13 +15,9 @@
 export default class UserTable {
   constructor(rows) {
     this.rows = rows;
-    this.div = document.createElement('div');
-    this.div.innerHTML = this.template();
-    this.myScript = document.querySelector('[type="module"]');
-    this.myScript.before(this.div);
-    this.elem = this.div;
-    this.newDiv = this.myScript.previousElementSibling;
-    this.buttons = this.newDiv.getElementsByTagName('button');
+    this.elem = document.createElement('div');
+    this.elem.innerHTML = this.template();
+    this.buttons = this.elem.getElementsByTagName('button');
     this.closeForClick();
   }
 

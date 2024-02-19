@@ -9,5 +9,4 @@ function getMinMax(str) {
     min: +arr[0],
     max: +arr[arr.length - 1]
   };
-
 }

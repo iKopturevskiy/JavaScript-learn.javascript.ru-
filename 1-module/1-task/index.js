@@ -8,7 +8,8 @@ function factorial(n) {
     n *= i;
   }
 
+  console.log(n);
   return n;
-
 }
 
+factorial(5);
