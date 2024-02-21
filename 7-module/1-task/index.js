@@ -87,7 +87,5 @@ export default class RibbonMenu {
     });
     this.target.dispatchEvent(newEvent);
   }
-
-
 }
 

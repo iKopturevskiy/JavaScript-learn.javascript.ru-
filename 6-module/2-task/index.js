@@ -17,7 +17,7 @@ export default class ProductCard {
     let target = event.target;
     if (target.closest('.card__button')) {
       const newEvent = new CustomEvent('product-add', {
-        detail: event.target.closest('.card__button').dataset.id,
+        detail: target.closest('.card__button').dataset.id,
         bubbles: true
       });
       target.dispatchEvent(newEvent);

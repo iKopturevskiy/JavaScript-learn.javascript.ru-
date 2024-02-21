@@ -50,8 +50,8 @@ export default class StepSlider {
   sliderOnClick () {
     this.elem.addEventListener('click', (event) => {
       this.difference = event.clientX - this.elem.getBoundingClientRect().left;
-      this.oneSector = this.difference / this.elem.offsetWidth;
-      this.whereClickAdd = Math.round(this.oneSector * this.howManySectors);
+      this.relativeValue = this.difference / this.elem.offsetWidth;
+      this.whereClickAdd = Math.round(this.relativeValue * this.howManySectors);
       this.divWithClassSliderValue.innerHTML = String(this.whereClickAdd);
       for (let span of this.spans) {
         if (span.classList.contains('slider__step-active')) {
