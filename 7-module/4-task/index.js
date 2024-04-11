@@ -27,8 +27,7 @@ export default class StepSlider {
     <div class="slider__progress"></div>
 
     <!--Шаги слайдера-->
-    <div class="slider__steps">
-    </div>`;
+    <div class="slider__steps"></div>`;
     return container;
   }
 
@@ -39,36 +38,54 @@ export default class StepSlider {
     }
   }
 
+  addStyles (pointermove) {
+    if (pointermove) {
+      this.fillPercentage = this.lengthToThumbInHundredths * 100;
+    } else {
+      this.fillPercentage = this.changePosition / this.howManySectors * 100;
+    }
+    this.divWithClassSliderTumb.style.left = `${this.fillPercentage}%`;
+    this.divWithClassSliderProgress.style.width = `${this.fillPercentage}%`;
+  }
+
   startPosition () {
     this.divWithClassSliderValue.innerHTML = String(this.value);
-    this.leftPercent = this.value / this.howManySectors * 100;
-    this.divWithClassSliderTumb.style.left = `${this.leftPercent}%`;
-    this.divWithClassSliderProgress.style.width = `${this.leftPercent}%`;
+    this.fillPercentage = this.value / this.howManySectors * 100;
+    this.divWithClassSliderTumb.style.left = `${this.fillPercentage}%`;
+    this.divWithClassSliderProgress.style.width = `${this.fillPercentage}%`;
     this.spans[this.value].classList.add('slider__step-active');
   }
 
-  sliderOnClick () {
+  addCustomEvent () {
+    const newEvent = new CustomEvent('slider-change', {
+      detail: this.whereClickAdd,
+      bubbles: true
+    });
+    this.elem.dispatchEvent(newEvent);
+  }
 
+  sliderThumbPositionChange (event) {
+    const lengthToThumb = event.clientX - this.elem.getBoundingClientRect().left;
+    const lengthToThumbInHundredths = lengthToThumb / this.elem.offsetWidth;
+    const changePosition = Math.round(lengthToThumbInHundredths * this.howManySectors);
+    return {
+      lengthToThumbInHundredths,
+      changePosition
+    };
+  }
+
+  sliderOnClick () {
     this.elem.addEventListener('click', (event) => {
-      this.difference = event.clientX - this.elem.getBoundingClientRect().left;
-      this.oneSector = this.difference / this.elem.offsetWidth;
-      this.whereClickAdd = Math.round(this.oneSector * this.howManySectors);
-      this.divWithClassSliderValue.innerHTML = String(this.whereClickAdd);
+      this.changePosition = this.sliderThumbPositionChange(event).changePosition;
+      this.divWithClassSliderValue.innerHTML = String(this.changePosition);
       for (let span of this.spans) {
         if (span.classList.contains('slider__step-active')) {
           span.classList.remove('slider__step-active');
         }
       }
-      this.spans[this.whereClickAdd].classList.add('slider__step-active');
-      this.leftPercent = this.whereClickAdd / this.howManySectors * 100;
-      this.divWithClassSliderTumb.style.left = `${this.leftPercent}%`;
-      this.divWithClassSliderProgress.style.width = `${this.leftPercent}%`;
-
-      const newEvent = new CustomEvent('slider-change', {
-        detail: this.whereClickAdd,
-        bubbles: true
-      });
-      this.elem.dispatchEvent(newEvent);
+      this.spans[this.changePosition].classList.add('slider__step-active');
+      this.addStyles();
+      this.addCustomEvent();
     });
 
     this.divWithClassSliderTumb.addEventListener('pointerdown', () => {
@@ -78,26 +95,22 @@ export default class StepSlider {
         if (!this.elem.querySelector('.slider_dragging')) {
           this.elem.classList.add('slider_dragging');
         }
-        this.clickPosition = event.clientX - this.elem.getBoundingClientRect().left;
-        this.oneSectorLang = this.clickPosition / this.elem.offsetWidth;
-        if (this.oneSectorLang < 0) {
-          this.oneSectorLang = 0;
+        this.changePosition = this.sliderThumbPositionChange(event).changePosition;
+        this.lengthToThumbInHundredths = this.sliderThumbPositionChange(event).lengthToThumbInHundredths;
+        if (this.lengthToThumbInHundredths < 0) {
+          this.lengthToThumbInHundredths = 0;
         }
-        if (this.oneSectorLang > 1) {
-          this.oneSectorLang = 1;
+        if (this.lengthToThumbInHundredths > 1) {
+          this.lengthToThumbInHundredths = 1;
         }
-        this.leftPercent = this.oneSectorLang * 100;
-        this.whereClickAdd = Math.round(this.oneSectorLang * this.howManySectors);
-        this.divWithClassSliderValue.innerHTML = String(this.whereClickAdd);
+        this.divWithClassSliderValue.innerHTML = String(this.changePosition);
         for (let span of this.spans) {
           if (span.classList.contains('slider__step-active')) {
             span.classList.remove('slider__step-active');
           }
         }
-        this.spans[this.whereClickAdd].classList.add('slider__step-active');
-        this.divWithClassSliderTumb.style.left = `${this.leftPercent}%`;
-        this.divWithClassSliderProgress.style.width = `${this.leftPercent}%`;
-
+        this.spans[this.changePosition].classList.add('slider__step-active');
+        this.addStyles('pointermove');
       };
 
 
@@ -105,17 +118,9 @@ export default class StepSlider {
 
 
       this.elem.addEventListener('pointerup', () => {
-        this.leftPercent = this.whereClickAdd / this.howManySectors * 100;
-        this.divWithClassSliderTumb.style.left = `${this.leftPercent}%`;
-        this.divWithClassSliderProgress.style.width = `${this.leftPercent}%`;
+        this.addStyles();
         this.elem.classList.remove('slider_dragging');
-
-        const newEvent = new CustomEvent('slider-change', {
-          detail: this.whereClickAdd,
-          bubbles: true
-        });
-        this.elem.dispatchEvent(newEvent);
-
+        this.addCustomEvent();
         this.elem.removeEventListener('pointermove', onMove);
       }, {once: true});
     });
