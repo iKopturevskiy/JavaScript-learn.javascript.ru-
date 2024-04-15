@@ -58,9 +58,10 @@ export default class StepSlider {
 
   addCustomEvent () {
     const newEvent = new CustomEvent('slider-change', {
-      detail: this.whereClickAdd,
+      detail: this.changePosition,
       bubbles: true
     });
+    console.log(newEvent.detail);
     this.elem.dispatchEvent(newEvent);
   }
 
