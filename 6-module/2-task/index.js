@@ -8,12 +8,12 @@ export default class ProductCard {
     this.image = product.image;
     this.id = product.id;
     this.elem = this.#container();
-    this.elem.addEventListener('click', this.buttonClick);
+    this.elem.addEventListener('click', this.newCustomEvent);
     this.button = this.elem.querySelector('.card__button');
     this.button.setAttribute('data-id', this.id);
   }
 
-  buttonClick (event) {
+  newCustomEvent (event) {
     let target = event.target;
     if (target.closest('.card__button')) {
       const newEvent = new CustomEvent('product-add', {
