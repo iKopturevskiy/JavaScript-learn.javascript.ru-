@@ -54,19 +54,24 @@ export default class Main {
       category: ribbonMenu.category
     });
 
-    document.body.addEventListener('click', (event) => {
-      let target = event.target;
-      if (target.closest('.card__button')) {
-        console.log(target.closest('.card__button').dataset.id);
-      }
-      if (target.closest('.carousel__button')) {
-        console.log(target.closest('.carousel__button').dataset.id);
-      }
+    /** Временное решение. Не работает CustomEvent из 6.2 **/
+    document.querySelectorAll('.card').forEach(item => {
+      item.addEventListener('click', (event) => {
+        let target = event.target;
+        if (target.closest('.card__button')) {
+          const newEvent = new CustomEvent('product-add', {
+            detail: target.closest('.card__button').dataset.id,
+            bubbles: true
+          });
+          target.dispatchEvent(newEvent);
+        }
+      });
     });
+    /** Временное решение. Не работает CustomEvent из 6.2 **/
 
-    // document.body.addEventListener('product-add', ({detail: productId}) => {
-    //   console.log(productId);
-    // });
+    document.body.addEventListener('product-add', ({detail: productId}) => {
+      console.log(productId);
+    });
   }
 }
 
