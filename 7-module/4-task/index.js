@@ -61,7 +61,6 @@ export default class StepSlider {
       detail: this.changePosition,
       bubbles: true
     });
-    console.log(newEvent.detail);
     this.elem.dispatchEvent(newEvent);
   }
 

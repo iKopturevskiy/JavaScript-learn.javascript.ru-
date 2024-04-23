@@ -11,7 +11,7 @@ export default class RibbonMenu {
     this.scrollByLeft();
     this.ribbonInner.addEventListener('scroll', () => this.hiddenButtons());
     this.ribbonInner.addEventListener('click', this.newCustomEvent);
-
+    this.category = null;
   }
 
   container() {
@@ -80,6 +80,7 @@ export default class RibbonMenu {
     }
 
     this.target.classList.add('ribbon__item_active');
+    this.category = this.target.getAttribute('data-id');
 
     const newEvent = new CustomEvent('ribbon-select', {
       detail: this.target.closest('.ribbon__item').dataset.id,
