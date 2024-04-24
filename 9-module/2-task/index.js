@@ -70,7 +70,25 @@ export default class Main {
     /** Временное решение. Не работает CustomEvent из 6.2 **/
 
     document.body.addEventListener('product-add', ({detail: productId}) => {
-      console.log(productId);
+      cart.addProduct(products.find(item => item.id === productId));
+    });
+
+    document.querySelector('.slider').addEventListener('slider-change', ({detail: changePosition}) => {
+      productsGrid.updateFilter({maxSpiciness: changePosition});
+    });
+
+    document.querySelector('.ribbon').addEventListener('ribbon-select', ({detail: category}) => {
+      productsGrid.updateFilter({category});
+    });
+
+    const nutsCheckbox = document.querySelector('#nuts-checkbox');
+    nutsCheckbox.addEventListener('change', () => {
+      nutsCheckbox.checked ? productsGrid.updateFilter({noNuts: true}) : productsGrid.updateFilter({noNuts: false});
+    });
+
+    const vegeterianCheckbox = document.querySelector('#vegeterian-checkbox');
+    vegeterianCheckbox.addEventListener('change', () => {
+      vegeterianCheckbox.checked ? productsGrid.updateFilter({vegeterianOnly: true}) : productsGrid.updateFilter({vegeterianOnly: false});
     });
   }
 }
